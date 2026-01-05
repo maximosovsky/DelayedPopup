@@ -1,0 +1,32 @@
+{
+  "name": "popup-stripe-component",
+  "version": "1.0.0",
+  "description": "Interactive popup component with Stripe payment integration",
+  "main": "index.js",
+  "files": [
+    "PopUp.tsx",
+    "PaymentButton.tsx",
+    "PopUpContext.tsx",
+    "cookie.ts",
+    "routes.ts",
+    "index.css",
+    "README.md"
+  ],
+  "keywords": [
+    "popup",
+    "stripe",
+    "payment",
+    "interactive",
+    "react"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@stripe/react-stripe-js": "^2.0.0",
+    "@stripe/stripe-js": "^2.0.0",
+    "express": "^4.0.0",
+    "stripe": "^12.0.0"
+  }
+}
