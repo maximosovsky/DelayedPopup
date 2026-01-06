@@ -1,0 +1,42 @@
+{
+  "name": "@delayed-popup/widget",
+  "version": "1.0.0",
+  "description": "Reusable chat button and popup widget with Stripe payment integration",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "echo 'Build not configured - use files directly'",
+    "test": "echo 'No tests configured'"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.2",
+    "@stripe/react-stripe-js": "^3.6.0",
+    "@stripe/stripe-js": "^7.0.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.453.0",
+    "tailwind-merge": "^2.5.4"
+  },
+  "keywords": [
+    "react",
+    "popup",
+    "chat-button",
+    "stripe",
+    "payment",
+    "widget"
+  ],
+  "author": "",
+  "license": "MIT"
+}

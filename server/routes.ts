@@ -3,11 +3,13 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import Stripe from "stripe";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn('Missing required Stripe secret: STRIPE_SECRET_KEY');
+const stripeMockEnabled = process.env.STRIPE_MOCK === "true";
+
+if (!process.env.STRIPE_SECRET_KEY && !stripeMockEnabled) {
+  console.warn("Missing required Stripe secret: STRIPE_SECRET_KEY");
 }
 
-const stripe = process.env.STRIPE_SECRET_KEY 
+const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: "2023-10-16",
     })
@@ -17,17 +19,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment route for one-time payments
   app.post("/api/create-payment-intent", async (req, res) => {
     try {
-      if (!stripe) {
-        return res.status(500).json({ 
-          message: "Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable."
-        });
-      }
-
       const { amount } = req.body;
       
       if (!amount || typeof amount !== 'number') {
         return res.status(400).json({ 
           message: "Invalid amount. Please provide a valid number." 
+        });
+      }
+
+      if (!stripe) {
+        if (!stripeMockEnabled) {
+          return res.status(500).json({
+            message: "Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable."
+          });
+        }
+        return res.json({
+          clientSecret: `pi_mock_secret_${Date.now()}`,
+          mock: true,
         });
       }
 

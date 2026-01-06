@@ -1,27 +1,26 @@
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 import { loadStripe } from "@stripe/stripe-js";
 import { useElements, useStripe, PaymentElement, Elements } from "@stripe/react-stripe-js";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-
-const stripeMockEnabled = import.meta.env.VITE_STRIPE_MOCK === "true";
-
-// Make sure to call `loadStripe` outside of a component's render
-const stripePromise = stripeMockEnabled
-  ? null
-  : loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
+import { Button } from "./ui/button";
+import { Dialog, DialogContent } from "./ui/dialog";
 
 interface PaymentButtonProps {
   amount: number;
   buttonRef?: React.RefObject<HTMLButtonElement>;
+  stripePublicKey?: string;
+  apiEndpoint?: string;
+  onSuccess?: () => void;
+  onError?: (error: string) => void;
 }
 
-function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
+interface CheckoutFormProps {
+  onSuccess: () => void;
+  onError?: (error: string) => void;
+}
+
+function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
-  const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,16 +41,8 @@ function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
     });
 
     if (error) {
-      toast({
-        title: "Payment Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      onError?.(error.message || "Payment failed");
     } else {
-      toast({
-        title: "Payment Successful",
-        description: "Thank you for your payment!",
-      });
       onSuccess();
     }
     
@@ -72,27 +63,46 @@ function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-export default function PaymentButton({ amount, buttonRef }: PaymentButtonProps) {
+export default function PaymentButton({ 
+  amount, 
+  buttonRef, 
+  stripePublicKey,
+  apiEndpoint = "/api/create-payment-intent",
+  onSuccess,
+  onError
+}: PaymentButtonProps) {
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [clientSecret, setClientSecret] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isMockPayment, setIsMockPayment] = useState(false);
-  const { toast } = useToast();
+  const [stripePromise, setStripePromise] = useState<any>(null);
 
   const handlePayClick = async () => {
     setIsLoading(true);
     try {
-      const res = await apiRequest("POST", "/api/create-payment-intent", { amount });
+      const res = await fetch(apiEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount }),
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create payment intent");
+      }
+
       const data = await res.json();
       setClientSecret(data.clientSecret);
-      setIsMockPayment(Boolean(data.mock) || stripeMockEnabled);
+      setIsMockPayment(Boolean(data.mock));
+      
+      if (!isMockPayment && stripePublicKey && !stripePromise) {
+        setStripePromise(loadStripe(stripePublicKey));
+      }
+      
       setShowPaymentDialog(true);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to initialize payment. Please try again.",
-        variant: "destructive",
-      });
+      const errorMessage = error instanceof Error ? error.message : "Failed to initialize payment";
+      onError?.(errorMessage);
       console.error("Error creating payment intent:", error);
     } finally {
       setIsLoading(false);
@@ -100,8 +110,12 @@ export default function PaymentButton({ amount, buttonRef }: PaymentButtonProps)
   };
 
   const handlePaymentSuccess = () => {
-    // Close just the Stripe payment dialog, but keep the popup open
     setShowPaymentDialog(false);
+    onSuccess?.();
+  };
+
+  const handlePaymentError = (error: string) => {
+    onError?.(error);
   };
 
   return (
@@ -123,11 +137,7 @@ export default function PaymentButton({ amount, buttonRef }: PaymentButtonProps)
 
       <Dialog 
         open={showPaymentDialog} 
-        onOpenChange={(open) => {
-          // When dialog is closed by user clicking outside or pressing escape,
-          // we don't want to close the popup, just the payment form
-          setShowPaymentDialog(open);
-        }}>
+        onOpenChange={setShowPaymentDialog}>
         <DialogContent className="sm:max-w-md" 
           aria-describedby="payment-dialog-description">
           <h2 className="text-xl font-bold sr-only" id="payment-dialog-title">Complete your payment</h2>
@@ -144,20 +154,14 @@ export default function PaymentButton({ amount, buttonRef }: PaymentButtonProps)
                 <Button
                   type="button"
                   className="w-full rounded-full"
-                  onClick={() => {
-                    toast({
-                      title: "Payment Successful",
-                      description: "Mock payment completed.",
-                    });
-                    handlePaymentSuccess();
-                  }}
+                  onClick={handlePaymentSuccess}
                 >
                   Simulate payment
                 </Button>
               </div>
-            ) : clientSecret ? (
+            ) : clientSecret && stripePromise ? (
               <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <CheckoutForm onSuccess={handlePaymentSuccess} />
+                <CheckoutForm onSuccess={handlePaymentSuccess} onError={handlePaymentError} />
               </Elements>
             ) : (
               <div className="flex items-center justify-center p-4">
