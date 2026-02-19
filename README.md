@@ -15,7 +15,7 @@
 > 💡 People ignore banners. They don't ignore messages. DelayedPopup disguises your offer as an Intercom-style chat — appearing at the right moment with a product card and one-click Stripe payment.
 
 <div align="center">
-  <img src="DelayedPopup.jpg" width="600" alt="DelayedPopup preview">
+  <img src="DelayedPopup.jpg" width="200" alt="DelayedPopup preview">
   <br><br>
   <a href="#-quick-start">Quick Start</a> · <a href="#-features">Features</a> · <a href="ARCHITECTURE.md">Architecture</a> · <a href="popup-widget-package/README.md">Widget Docs</a>
 </div>
