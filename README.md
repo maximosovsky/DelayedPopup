@@ -188,4 +188,4 @@ import { PopUpProvider, ChatButton, PopUp } from '@delayed-popup/widget';
 
 ## 📄 License
 
-Maxim Osovsky. Licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+[Maxim Osovsky](https://www.linkedin.com/in/osovsky/). Licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
