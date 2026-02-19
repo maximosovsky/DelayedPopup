@@ -1,105 +1,191 @@
-# DelayedPopup
+<div align="center">
 
-Intercom-style delayed popup widget with Stripe payment integration. Appears as a chat bubble that opens into a product offer with one-click payment — designed to boost conversions on any website.
+# 💬 DelayedPopup
 
-## Features
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-96%25-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-Payments-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-- 💬 **Animated chat button** — bouncing purple bubble that attracts attention every 5 seconds
-- 🎨 **Intercom-style popup** — modern chat-like UI with avatar, product image, pricing, and discount display
-- 💳 **Stripe integration** — real payment processing via PaymentIntents + mock mode for development
-- 🍪 **Cookie management** — configurable display frequency (show once per N days)
-- ⏱ **Configurable delay** — popup appears after a set timeout
-- 📦 **Standalone widget package** — export as npm package for integration into any React app
+**Chat-like popup that converts visitors into customers — one widget, zero friction**
 
-## Tech Stack
+</div>
+
+> 💡 People ignore banners. They don't ignore messages. DelayedPopup disguises your offer as an Intercom-style chat — appearing at the right moment with a product card and one-click Stripe payment.
+
+<div align="center">
+  <img src="generated-icon.png" width="120" alt="DelayedPopup icon">
+  <br><br>
+  <a href="#-quick-start">Quick Start</a> · <a href="#-features">Features</a> · <a href="ARCHITECTURE.md">Architecture</a> · <a href="popup-widget-package/README.md">Widget Docs</a>
+</div>
+
+---
+
+## 💡 Concept
+
+> A floating chat button bounces in the corner. After a configurable delay, a popup slides up — looking exactly like an Intercom message from a real person. Inside: a product offer with image, pricing, discount, and a Stripe payment button. The visitor pays without leaving the page.
+
+The entire flow — from attention grab to payment — happens in **3 clicks** and **under 10 seconds**.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 💬 **Animated Chat Button** | Purple bubble with periodic bounce animation (every 5s) |
+| 🎨 **Intercom-Style UI** | Avatar, online status, product card, fake message input |
+| 💳 **Stripe Payments** | PaymentIntents API with automatic 3D Secure support |
+| 🧪 **Mock Mode** | Full dev experience without a Stripe account |
+| 🍪 **Cookie Control** | Show once per N days — no popup fatigue |
+| ⏱ **Delayed Trigger** | Configurable timeout before popup appears |
+| 📦 **Widget Package** | Export as standalone npm package for any React app |
+| 📱 **Responsive** | Works on desktop and mobile |
+| ♿ **Accessible** | Escape to close, click-outside, focus management |
+
+---
+
+## 🚀 Quick Start
+
+```bash
+git clone https://github.com/maximosovsky/DelayedPopup.git
+cd DelayedPopup && npm install
+cp .env.example .env && npm run dev
+```
+
+Open **http://localhost:5000** → popup appears after 2 seconds.
+
+<details>
+<summary>🔧 Advanced Setup</summary>
+
+### Prerequisites
+
+- **Node.js** 18+
+- **npm** 9+
+- (Optional) Stripe account for real payments
+- (Optional) Neon PostgreSQL for persistent popup configs
+
+### Production Build
+
+```bash
+npm run build     # Vite (client) + esbuild (server)
+npm start         # Serve production bundle
+```
+
+### Database
+
+```bash
+# Set DATABASE_URL in .env, then:
+npm run db:push   # Push Drizzle schema to Neon PostgreSQL
+```
+
+</details>
+
+<details>
+<summary>🔐 Environment Variables</summary>
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `STRIPE_SECRET_KEY` | For real payments | — | Stripe secret key (`sk_test_...`) |
+| `VITE_STRIPE_PUBLIC_KEY` | For real payments | — | Stripe publishable key (`pk_test_...`) |
+| `STRIPE_MOCK` | No | `true` | Mock Stripe on server |
+| `VITE_STRIPE_MOCK` | No | `true` | Mock Stripe on client |
+
+> 💡 Default `.env.example` works out of the box with mocked Stripe.
+
+</details>
+
+---
+
+## 🏗️ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | React 18, TypeScript, TailwindCSS, shadcn/ui (Radix) |
-| **Backend** | Express, Node.js, Drizzle ORM (Neon PostgreSQL) |
-| **Payments** | Stripe (PaymentIntents API) |
-| **Animation** | Framer Motion, TailwindCSS Animate |
-| **Build** | Vite, esbuild |
-
-## Quick Start
-
-```bash
-# 1. Clone the repo
-git clone https://github.com/maximosovsky/DelayedPopup.git
-cd DelayedPopup
-
-# 2. Install dependencies
-npm install
-
-# 3. Copy env and configure
-cp .env.example .env
-
-# 4. Run in development (mock Stripe)
-npm run dev
-
-# 5. Open http://localhost:5000
-```
-
-The popup will appear 2 seconds after page load.
-
-## Environment Variables
-
-```env
-# Stripe (required for real payments)
-STRIPE_SECRET_KEY=sk_test_...
-VITE_STRIPE_PUBLIC_KEY=pk_test_...
-
-# Mock mode (no Stripe account needed)
-STRIPE_MOCK=true
-VITE_STRIPE_MOCK=true
-```
-
-## Project Structure
+| **Frontend** | React 18 · TypeScript · TailwindCSS · shadcn/ui (Radix) |
+| **Backend** | Express 4 · Node.js · Drizzle ORM |
+| **Database** | Neon PostgreSQL (serverless) |
+| **Payments** | Stripe PaymentIntents API |
+| **Animation** | Framer Motion · TailwindCSS Animate |
+| **Build** | Vite 5 · esbuild |
+| **Routing** | Wouter |
 
 ```
 DelayedPopup/
 ├── client/src/
 │   ├── components/
-│   │   ├── PopUp.tsx          # Main popup UI (Intercom-style)
-│   │   ├── PaymentButton.tsx  # Stripe payment flow
-│   │   └── ChatButton.tsx     # Floating chat bubble
+│   │   ├── PopUp.tsx            # Intercom-style popup UI
+│   │   ├── PaymentButton.tsx    # Stripe Elements + mock
+│   │   └── ChatButton.tsx       # Floating animated bubble
 │   ├── contexts/
-│   │   └── PopUpContext.tsx   # State & cookie management
+│   │   └── PopUpContext.tsx     # State + cookies + content
 │   ├── pages/
-│   │   └── home.tsx           # Demo page
+│   │   └── home.tsx             # Demo page
 │   └── lib/
-│       └── cookie.ts          # Cookie utilities
+│       └── cookie.ts            # Cookie utilities
 ├── server/
-│   ├── index.ts               # Express server
-│   └── routes.ts              # Stripe PaymentIntent API
+│   ├── index.ts                 # Express setup
+│   └── routes.ts                # POST /api/create-payment-intent
 ├── shared/
-│   └── schema.ts              # DB schema (users + popup configs)
-└── popup-widget-package/      # Standalone npm widget
-    ├── README.md              # Integration guide
-    └── src/                   # Widget source files
+│   └── schema.ts                # Users + popup_configurations
+└── popup-widget-package/        # Standalone widget export
 ```
 
-## Widget Package
+---
 
-The `popup-widget-package/` directory contains a standalone version that can be integrated into any React project:
+## 📦 Widget Package
+
+Drop the popup into any React app — no backend changes needed:
 
 ```bash
-npm install /path/to/popup-widget-package
+npm install ./popup-widget-package
 ```
 
-See [popup-widget-package/README.md](popup-widget-package/README.md) for full integration docs.
+```tsx
+import { PopUpProvider, ChatButton, PopUp } from '@delayed-popup/widget';
 
-## Scripts
+<PopUpProvider>
+  <YourApp />
+  <ChatButton />
+  <PopUp title="Special Offer!" price="$99" discount="$160" amount={9900} />
+</PopUpProvider>
+```
+
+📖 Full guide: [Widget README](popup-widget-package/README.md) · [Integration Guide](popup-widget-package/INTEGRATION_GUIDE.md)
+
+---
+
+## 📜 Scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start dev server (port 5000) |
-| `npm run dev:mock` | Dev server with mocked Stripe |
-| `npm run build` | Build for production |
-| `npm start` | Run production build |
-| `npm run check` | TypeScript type check |
-| `npm run db:push` | Push Drizzle schema to DB |
+| `npm run dev` | Dev server on port 5000 |
+| `npm run dev:mock` | Dev with mocked Stripe |
+| `npm run build` | Production build |
+| `npm start` | Run production |
+| `npm run check` | TypeScript check |
+| `npm run db:push` | Push DB schema |
 
-## License
+---
 
-MIT
+## 🗺️ Roadmap
+
+- [ ] Webhook verification for payment confirmation
+- [ ] A/B testing for popup timing and content
+- [ ] Analytics dashboard (conversion rates)
+- [ ] Multiple popup templates
+- [ ] Exit-intent trigger (besides timer)
+
+---
+
+## 🤝 Contributing
+
+1. Fork → `git checkout -b feature/name` → commit → PR
+2. Follow existing code style (TypeScript strict, Tailwind classes)
+3. Test with `npm run check` before submitting
+
+---
+
+## 📄 License
+
+MIT · Made by [maximosovsky](https://github.com/maximosovsky)
