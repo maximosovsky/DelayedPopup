@@ -6,7 +6,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-96%25-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Stripe](https://img.shields.io/badge/Stripe-Payments-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
+![License](https://img.shields.io/badge/License-CC_BY--SA_4.0-lightgrey?style=for-the-badge)
 
 **Chat-like popup that converts visitors into customers — one widget, zero friction**
 
@@ -188,4 +188,4 @@ import { PopUpProvider, ChatButton, PopUp } from '@delayed-popup/widget';
 
 ## 📄 License
 
-MIT · Made by [maximosovsky](https://github.com/maximosovsky)
+Maxim Osovsky. Licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
